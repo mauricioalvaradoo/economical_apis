@@ -17,7 +17,7 @@ def get_data(series, fechaini, fechafin):
         
         - Diario: yyyy-mm-dd
         - Mensual: yyyy-mm
-        - Trimestral: yyyy'Q'm 
+        - Trimestral: yyyy-q
         - Anual: yyyy
     
     fechafin: str
@@ -25,7 +25,7 @@ def get_data(series, fechaini, fechafin):
         
         - Diario: yyyy-mm-dd
         - Mensual: yyyy-mm
-        - Trimestral: yyyy'Q'm 
+        - Trimestral: yyyy-q 
         - Anual: yyyy
         
     Retorno
@@ -58,7 +58,7 @@ def get_data(series, fechaini, fechafin):
         if r.status_code == 200:
             pass
         else:
-            print("Vinculacion no valida!")
+            print("Vinculacion inválida!")
             break
         
         r = r.json()
@@ -81,14 +81,12 @@ def get_data(series, fechaini, fechafin):
         # Merge
         if df.empty is True:
             df = pd.concat([df, dic])
-            print(f"Has importado tu variable {i}! \n")
                 
         else:
             df = pd.merge(df, dic, how="outer")
-            print(f"Has importado tu variable {i}! \n")
 
     df.set_index("time", inplace=True)
-    df.rename(series, inplace=True)
+    df.rename(series, axis=1, inplace=True)
 
 
     # Modificaciones adicionales
@@ -106,25 +104,33 @@ def get_data(series, fechaini, fechafin):
         df.index = pd.to_datetime(df.index, format="%b.%Y")
     except:
         pass
-
+    try:
+        # Trimestral
+        df.index = pd.period_range(fechaini, fechafin, freq="Q")
+    except:
+        pass
 
     return df
 
 
 
 
-def get_documentation(consulta, frecuencia=None):
+def get_documentation(consulta, grupo=None, frecuencia=None):
 
     """ Extraer microdatos de la consulta
     
     Parametros
     ----------
     consulta: list
-        Palabras claves de la consulta
-    
+        Palabras claves de las series
+
+    grupo: list
+        Palabras claves de los grupos
+
     frecuencia: str
         Frecuencia de la serie consultada. Default: None.
         Opciones: "Diario", "Mensual", "Trimestral", "Anual"
+
 
     Retorno
     ----------
@@ -146,12 +152,25 @@ def get_documentation(consulta, frecuencia=None):
     df = df[["Código de serie", "Grupo de serie", "Nombre de serie", "Frecuencia", "Fecha de inicio", "Fecha de fin"]]
     consulta = [x.lower() for x in consulta]
 
-    try:
-        if frecuencia is not None:
+    # Frecuencia
+    if frecuencia is not None:
+        try:
             df = df[df["Frecuencia"] == str(frecuencia)]
-    except:
-        pass
+        except:
+            pass
+    
+    # Grupo
+    if grupo is not None:
+        grupo = [x.lower() for x in grupo]
+        
+        for i in grupo:
+            try:
+                filter = df["Grupo de serie"].str.lower().str.contains(i)
+                df = df[filter]
+            except:
+                pass
 
+    # Series
     for i in consulta:           
         try:
             filter = df["Nombre de serie"].str.lower().str.contains(i)
