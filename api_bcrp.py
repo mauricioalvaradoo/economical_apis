@@ -143,7 +143,7 @@ def get_documentation(consulta, frecuencia=None):
     
     metadatos = "data/BCRPData-metadata.csv"
     df = pd.read_csv(metadatos, index_col=0, sep=";", encoding="latin-1").reset_index()
-    df = df[["Código de serie", "Grupo de serie", "Nombre de serie", "Frecuencia"]]
+    df = df[["Código de serie", "Grupo de serie", "Nombre de serie", "Frecuencia", "Fecha de inicio", "Fecha de fin"]]
     consulta = [x.lower() for x in consulta]
 
     try:
@@ -161,5 +161,3 @@ def get_documentation(consulta, frecuencia=None):
     
     df.set_index("Código de serie", inplace=True)
     return df
-
-
