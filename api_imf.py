@@ -8,7 +8,7 @@ import requests
 # frequency = "M"
 
 
-def get_imf_data(country, series, fechaini, fechafin, frequency, database="IFS"):
+def get_data(country, series, fechaini, fechafin, frequency, database="IFS"):
  
     """ Importar multiples series de la API del IMF
     
@@ -96,23 +96,23 @@ def get_imf_data(country, series, fechaini, fechafin, frequency, database="IFS")
 
 
 
-def get_imf_codes(database):
+# def get_codes(database):
     
-    base = "http://dataservices.imf.org/REST/SDMX_JSON.svc/"
-    method = f"DataStructure/{database}"
-    url = f"{base}{method}"
+#     base = "http://dataservices.imf.org/REST/SDMX_JSON.svc/"
+#     method = f"DataStructure/{database}"
+#     url = f"{base}{method}"
 
-    dimension_list = requests.get(url).json()\
-                ['Structure']['KeyFamilies']['KeyFamily']\
-                ['Components']['Dimension']
+#     dimension_list = requests.get(url).json()\
+#                 ['Structure']['KeyFamilies']['KeyFamily']\
+#                 ['Components']['Dimension']
              
     
-    # Extraccion de indicadores
-    method = f"CodeList/{dimension_list[2]['@codelist']}"
-    url = f"{base}{method}"
+#     # Extraccion de indicadores
+#     method = f"CodeList/{dimension_list[2]['@codelist']}"
+#     url = f"{base}{method}"
 
-    code_list = requests.get(url).json()\
-     	    ['Structure']['CodeLists']['CodeList']['Code']
+#     code_list = requests.get(url).json()\
+#      	    ['Structure']['CodeLists']['CodeList']['Code']
 
     
-    return (for code in code_list: print(f"{code['Description']['#text']}: {code['@value']}"))
+#     return (for code in code_list: print(f"{code['Description']['#text']}: {code['@value']}"))

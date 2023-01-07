@@ -65,10 +65,7 @@ def get_yfinance_data(series, fechaini=None, fechafin=None):
     """
     
     
-    keys = list(dic.keys())
-    names = list(dic.values())
-
-
+    keys = list(series.keys())
     df = pd.DataFrame()
     
     for key in keys:
@@ -76,7 +73,7 @@ def get_yfinance_data(series, fechaini=None, fechafin=None):
         
         try:
             data = data.history(start=fechaini, end=fechafin)
-        except
+        except:
             data = data.history(period="max")  
         
         data.reset_index(inplace=True)
