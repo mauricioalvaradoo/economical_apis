@@ -70,18 +70,17 @@ def get_data(series, fechaini, fechafin):
         for value in periods:
             value = value["values"][0]
             values_list.append(float(value))
-
+            
         for time in periods:
             time = time["name"]
             time_list.append(time)
-                
+
         dic = {"time": time_list, f"{i}": values_list}
         dic = pd.DataFrame(dic)
                             
         # Merge
         if df.empty is True:
-            df = pd.concat([df, dic])
-                
+            df = pd.concat([df, dic])        
         else:
             df = pd.merge(df, dic, how="outer")
 
@@ -91,33 +90,25 @@ def get_data(series, fechaini, fechafin):
 
     # Modificaciones adicionales
     try:
-        df.index = df.index.str.replace('Set', 'Sep')
+        df.index = pd.period_range(fechaini, fechafin, freq="Q") # Trimestral
     except:
-        pass
-    try:
-        # Diarias
-        df.index = pd.to_datetime(df.index, format="%d.%b.%y")
-    except:
-        pass
-    try:
-        # Mensuales
-        df.index = pd.to_datetime(df.index, format="%b.%Y")
-    except:
-        pass
-    try:
-        # Trimestral
-        df.index = pd.period_range(fechaini, fechafin, freq="Q")
-    except:
-        pass
+        try:
+            df.index = df.index.str.replace('Set', 'Sep')
+            df.index = pd.to_datetime(df.index, format="%b.%Y") # Mensuales
+        except:
+            try:
+                df.index = pd.to_datetime(df.index, format="%d.%b.%y") # Diarias
+            except:
+                pass
 
     return df
 
 
 
 
-def get_documentation(consulta, grupo=None, frecuencia=None):
+def get_codes(consulta, grupo=None, frecuencia=None):
 
-    """ Extraer microdatos de la consulta
+    """ Extraer código de la consulta
     
     Parametros
     ----------
@@ -147,9 +138,7 @@ def get_documentation(consulta, grupo=None, frecuencia=None):
     
     """
     
-    metadatos = "data/BCRPData-metadata.csv"
-    df = pd.read_csv(metadatos, index_col=0, sep=";", encoding="latin-1").reset_index()
-    df = df[["Código de serie", "Grupo de serie", "Nombre de serie", "Frecuencia", "Fecha de inicio", "Fecha de fin"]]
+    df = metadatos()
     consulta = [x.lower() for x in consulta]
 
     # Frecuencia
@@ -180,3 +169,47 @@ def get_documentation(consulta, grupo=None, frecuencia=None):
     
     df.set_index("Código de serie", inplace=True)
     return df
+
+
+
+def get_documentation(code):
+    
+    """ Extraer microdatos del código de la serie
+    
+    Parametros
+    ----------
+    code: list
+        Código base de la serie
+
+
+    Retorno
+    ----------
+    df: pd.DataFrame
+        Metadatos de las series consultadas
+    
+    
+    Ruta
+    ----------
+    https://estadisticas.bcrp.gob.pe/estadisticas/series/ayuda/metadatos
+    
+    
+    @author: Mauricio Alvarado
+    
+    """
+
+    df = metadatos()
+    df = df[df["Código de serie"] == str(code)]
+
+    return df
+
+
+
+def metadatos():
+
+    metadatos = "data/BCRPData-metadata.csv"
+    df = pd.read_csv(metadatos, index_col=0, sep=";", encoding="latin-1").reset_index()
+    df = df[["Código de serie", "Grupo de serie", "Nombre de serie", "Frecuencia", "Fecha de inicio", "Fecha de fin"]]
+
+    return df
+
+
