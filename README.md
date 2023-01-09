@@ -23,6 +23,7 @@ Vincularse con las APIs:
 </br>
 </br>
 </br>
+
 ## Obtención de datos
 Cada código tiene funciones comunes entre todas. La primera es:
 ```
