@@ -20,8 +20,7 @@ Vincularse con las APIs:
       <img src="figures/world-bank-logo.png" width="200">
       <img src="figures/ocde-logo.png" width="200" align="right">
 </p>
-</br> </br> </br>
-</br> </br>
+</br> </br> </br> </br> </br>
 
 ## Obtención de datos
 Cada código tiene funciones comunes entre todas. La primera es:
