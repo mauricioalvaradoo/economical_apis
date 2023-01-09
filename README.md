@@ -15,6 +15,8 @@ El objetivo es vincularse con las API:
       <img src="figures/yahoo-finance-logo.png" width="200">
       <img src="figures/imf-logo.png" width="200" align="right">
 </p>
+
+
 <p align="center">
       <img src="figures/fred-logo.png" width="200" align="left">
       <img src="figures/world-bank-logo.png" width="200">
