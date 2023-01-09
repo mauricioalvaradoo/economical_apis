@@ -11,12 +11,12 @@ El objetivo es vincularse con las API:
 6. OCDE
 
 <p align="center">
-      <img src="figures/bcrp-logo.png" width="100" align="left">
-      <img src="figures/yahoo-finance-logo.png" width="100">
-      <img src="figures/imf-logo.png" width="100" align="right">
+      <img src="figures/bcrp-logo.png" width="200" align="left">
+      <img src="figures/yahoo-finance-logo.png" width="200">
+      <img src="figures/imf-logo.png" width="200" align="right">
 </p>
 <p align="center">
-      <img src="figures/fred-logo.png" width="100" align="left">
-      <img src="figures/world-bank-logo.png" width="100">
-      <img src="figures/ocde-logo.png" width="100" align="right">
+      <img src="figures/fred-logo.png" width="200" align="left">
+      <img src="figures/world-bank-logo.png" width="200">
+      <img src="figures/ocde-logo.png" width="200" align="right">
 </p>
