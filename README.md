@@ -5,8 +5,8 @@ El proyecto fue desarrollado por Mauricio Alvarado y Andrei Romero.
 Vincularse con las APIs:
 1. BCRP
 2. YahooFinance
-3. IMF
-4. FRED
+3. FRED
+4. IMF
 5. WorldBank
 6. OCDE
 
