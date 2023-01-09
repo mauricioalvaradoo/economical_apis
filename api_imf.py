@@ -1,11 +1,6 @@
 import pandas as pd
 import requests
 
-# pais = "GB"
-# series = ["PMP_IX"]
-# fechaini = "2010"
-# fechafin = "2017"
-# frequency = "M"
 
 
 def get_data(country, series, fechaini, fechafin, frequency, database="IFS"):
@@ -28,22 +23,16 @@ def get_data(country, series, fechaini, fechafin, frequency, database="IFS"):
         Base de datos. Default International Finance Statistics (IFS)
         Otras: Goverment Finance (GFS), Balance of Payments (BOP), entre otros
     
-    
     Retorno
     ------
     df: pd.DataFrame
         Series consultadas
     
     
-    Paises usuales
-    ------
-    * GB: Gran Bretaña
-    
-    
     Documentacion
     ------
-    http://www.bd-econ.com/imfapi1.html
-    https://data.imf.org/?sk=388DFA60-1D26-4ADE-B505-A05A558D9A42&sId=1479329132316
+    * http://www.bd-econ.com/imfapi1.html
+    * https://data.imf.org/?sk=388DFA60-1D26-4ADE-B505-A05A558D9A42&sId=1479329132316
     
     
     @author: Mauricio Alvarado
@@ -96,23 +85,95 @@ def get_data(country, series, fechaini, fechafin, frequency, database="IFS"):
 
 
 
-# def get_codes(database):
-    
-#     base = "http://dataservices.imf.org/REST/SDMX_JSON.svc/"
-#     method = f"DataStructure/{database}"
-#     url = f"{base}{method}"
 
-#     dimension_list = requests.get(url).json()\
-#                 ['Structure']['KeyFamilies']['KeyFamily']\
-#                 ['Components']['Dimension']
-             
+def get_codes(tipo, consulta=None):
     
-#     # Extraccion de indicadores
-#     method = f"CodeList/{dimension_list[2]['@codelist']}"
-#     url = f"{base}{method}"
-
-#     code_list = requests.get(url).json()\
-#      	    ['Structure']['CodeLists']['CodeList']['Code']
-
+    """ Extraer código de la consulta
     
-#     return (for code in code_list: print(f"{code['Description']['#text']}: {code['@value']}"))
+    Parametros
+    ----------
+    tipo: str
+        Tipo de datos a consultar: "Indicadores", "Países", "Regiones", "Grupos"
+    consulta: list
+        Palabras claves de consulta
+
+
+    Retorno
+    ----------
+    df: pd.DataFrame
+        Consulta
+
+
+    Documentacion
+    ----------
+    https://www.imf.org/external/datamapper/api/help
+
+
+    @author: Mauricio Alvarado
+    
+    """
+
+    if tipo == "Indicadores":
+        respuesta = "https://www.imf.org/external/datamapper/api/v1/indicators"
+        r = requests.get(respuesta).json()["indicators"]
+        df = get_codes_df1(r)  
+    elif tipo == "Países":
+        respuesta = "https://www.imf.org/external/datamapper/api/v1/countries"
+        r = requests.get(respuesta).json()["countries"]
+        df = get_codes_df2(r)  
+    elif tipo == "Regiones":
+        respuesta = "https://www.imf.org/external/datamapper/api/v1/regions"
+        r = requests.get(respuesta).json()["regions"]
+        df = get_codes_df2(r)
+    elif tipo == "Grupos":
+        respuesta = "https://www.imf.org/external/datamapper/api/v1/groups"
+        r = requests.get(respuesta).json()["groups"]
+        df = get_codes_df2(r)
+    else:
+        respuesta = print("Revisa bien el tipo!")
+
+    if consulta is not None:
+            consulta = [x.lower() for x in consulta]
+            
+            for i in consulta:
+                try:
+                    filter = df["Nombres"].str.lower().str.contains(i)
+                    df = df[filter]
+                except:
+                    pass
+
+    return df
+
+
+
+
+def get_codes_df1(r):
+    codes = []
+    names = []
+    units = []
+
+    for i in list(r.keys()):
+        codes.append(i)
+    for i in list(r.values()):
+        names.append(i["label"])
+        units.append(i["unit"])
+        
+    df = pd.DataFrame({"Código": codes, "Nombres": names, "Unidades": units})
+
+    return df
+
+
+
+
+def get_codes_df2(r):
+    codes = []
+    names = []
+
+    for i in list(r.keys()):
+        codes.append(i)
+    for i in list(r.values()):
+        names.append(i["label"])
+
+    df = pd.DataFrame({"Código": codes, "Nombres": names})
+
+    return df

@@ -11,18 +11,14 @@ def get_data(series, fechaini, fechafin):
     ----------
     series: dict
         Diccionario de los códigos y nombres de las series
-    
-    fechaini: str
-        Fecha de inicio de la serie 
-        
+    fechaini: datetime
+        Fecha de inicio de la serie:
         - Diario: yyyy-mm-dd
         - Mensual: yyyy-mm
         - Trimestral: yyyy-q
         - Anual: yyyy
-    
-    fechafin: str
-        Fecha de fin de la serie
-        
+    fechafin: datetime
+        Fecha de fin de la serie:
         - Diario: yyyy-mm-dd
         - Mensual: yyyy-mm
         - Trimestral: yyyy-q 
@@ -116,7 +112,7 @@ def get_codes(consulta, grupo=None, frecuencia=None):
         Palabras claves de las series
 
     grupo: list
-        Palabras claves de los grupos
+        Palabras claves de los grupos. Default: None
 
     frecuencia: str
         Frecuencia de la serie consultada. Default: None.
