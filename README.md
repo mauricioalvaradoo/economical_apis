@@ -12,15 +12,5 @@ El objetivo es vincularse con las API:
 
 
 <img src="figures/bcrp-logo.png" width="100"/> <img src="yahoo-finance-logo.png" width="100"/> 
-<p align="center">
-  <img src="figures/imf-logo.png" width="100">
-</p>
-<p align="center">
-  <img src="figures/fred-logo.png" width="100">
-</p>
-<p align="center">
-  <img src="figures/world-bank-logo.png" width="100">
-</p>
-<p align="center">
-  <img src="figures/ocde-logo.png" width="100">
-</p>
+<img src="figures/imf-logo.png" width="100"/> <img src="fred-logo.png" width="100"/> 
+<img src="figures/world-bank-logo.png" width="100"/> <img src="ocde-logo.png" width="100"/> 
