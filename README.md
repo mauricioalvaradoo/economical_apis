@@ -10,7 +10,6 @@ Vincularse con las APIs:
 5. WorldBank
 6. OCDE
 
-
 <p align="center">
       <img src="figures/bcrp-logo.png" width="150" align="left">
       <img src="figures/yahoo-finance-logo.png" width="200">
@@ -22,8 +21,7 @@ Vincularse con las APIs:
       <img src="figures/ocde-logo.png" width="200" align="right">
 </p>
 
-\s
-\s
+\vspace
 ## Obtención de datos
 Cada código tiene funciones comunes entre todas. La primera es:
 ```
