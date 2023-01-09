@@ -21,7 +21,7 @@ Vincularse con las APIs:
       <img src="figures/ocde-logo.png" width="200" align="right">
 </p>
 
-\vspace
+<p></p>
 ## Obtención de datos
 Cada código tiene funciones comunes entre todas. La primera es:
 ```
