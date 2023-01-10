@@ -174,7 +174,7 @@ def get_codes(consulta, grupo=None, frecuencia=None):
 
 def get_documentation(code):
     
-    """ Extraer microdatos del código de la serie
+    """ Extraer metadatos del código de la serie
     
     Parametros
     ----------
