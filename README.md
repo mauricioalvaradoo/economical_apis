@@ -25,15 +25,14 @@ Vincularse con las APIs:
 
 
 ## Métodos
-Cada código tiene dos funciones comunes. La primera es:
+Cada código tiene dos funciones comunes. La primera sirve para extraer las series dado el periodo definidos en los insumos:
 ```
 get_data()
 ```
-Sirve para extraer las series dado el periodo definidos en los insumos.
 
-La segunda es: 
+La segunda sirve para conseguir la metadata asociada a palabras claves: 
 ```
 get_codes()
 ```
-Dado palabras claves, se consigue la metadata asociada. Esto incluye principalmente los nombres de las series y códigos que servirán como complemento con la función anterior `get_data()`.
+El resultado incluye los nombres de las series, códigos y fechas que servirán como complemento con la función anterior `get_data()`.
 
