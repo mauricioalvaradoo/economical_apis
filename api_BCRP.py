@@ -62,8 +62,7 @@ def get_data(series, fechaini, fechafin):
         list_time = []
                 
         for value in response:
-            list_values.append(float(value["values"][0]))
-            
+            list_values.append(float(value["values"][0]))    
         for time in response:
             list_values.append(time["name"])
 
