@@ -7,7 +7,7 @@ def get_data(series, fechaini, fechafin):
 
     """ Importar multiples series de la API del BCRP
     
-    Parametros
+    Parámetros
     ----------
     series: dict
         Diccionario de los códigos y nombres de las series
@@ -29,12 +29,11 @@ def get_data(series, fechaini, fechafin):
     df: pd.DataFrame
         Series consultadas
     
-    
-    Ruta
+    Documentación
     ----------
     https://estadisticas.bcrp.gob.pe/estadisticas/series/ayuda/api
     
-    
+
     @author: Mauricio Alvarado
     
     """
@@ -57,29 +56,21 @@ def get_data(series, fechaini, fechafin):
             print("Vinculacion inválida!")
             break
         
-        r = r.json()
-        periods = r.get("periods")
+        response = r.json().get("periods")
         
-        values_list = []
-        time_list = []
+        list_values = []
+        list_time = []
                 
-        for value in periods:
-            value = value["values"][0]
-            values_list.append(float(value))
+        for value in response:
+            list_values.append(float(value["values"][0]))
             
-        for time in periods:
-            time = time["name"]
-            time_list.append(time)
+        for time in response:
+            list_values.append(time["name"])
 
-        dic = {"time": time_list, f"{i}": values_list}
-        dic = pd.DataFrame(dic)
-                            
         # Merge
-        if df.empty is True:
-            df = pd.concat([df, dic])        
-        else:
-            df = pd.merge(df, dic, how="outer")
-
+        dic = pd.DataFrame({"time": list_time, f"{i}": list_time})                      
+        df = pd.concat([df, dic]) if df.empty is True else pd.merge(df, dic, how="outer")
+        
     df.set_index("time", inplace=True)
     df.rename(series, axis=1, inplace=True)
 
@@ -106,26 +97,22 @@ def get_codes(consulta, grupo=None, frecuencia=None):
 
     """ Extraer código de la consulta
     
-    Parametros
+    Parámetros
     ----------
     consulta: list
         Palabras claves de las series
-
     grupo: list
         Palabras claves de los grupos. Default: None
-
     frecuencia: str
         Frecuencia de la serie consultada. Default: None.
         Opciones: "Diario", "Mensual", "Trimestral", "Anual"
-
 
     Retorno
     ----------
     df: pd.DataFrame
         Metadatos de las series consultadas
     
-    
-    Ruta
+    Documentación
     ----------
     https://estadisticas.bcrp.gob.pe/estadisticas/series/ayuda/metadatos
     
@@ -172,19 +159,17 @@ def get_documentation(code):
     
     """ Extraer microdatos del código de la serie
     
-    Parametros
+    Parámetros
     ----------
     code: list
         Código base de la serie
-
 
     Retorno
     ----------
     df: pd.DataFrame
         Metadatos de las series consultadas
-    
-    
-    Ruta
+      
+    Documentación
     ----------
     https://estadisticas.bcrp.gob.pe/estadisticas/series/ayuda/metadatos
     

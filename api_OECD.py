@@ -2,8 +2,11 @@ import pandas as pd
 import requests 
 import sys
 
-def api_oecd(identifier, countries, datos, fechaini, fechafin, periodicidad):
-    """Se importa información económica de la OECD
+
+
+def get_data(identifier, countries, datos, fechaini, fechafin, periodicidad):
+    
+    """ Importar multiples series de la API de la OCDE
     
     Parametros
     ----------
@@ -20,22 +23,24 @@ def api_oecd(identifier, countries, datos, fechaini, fechafin, periodicidad):
     periodicidad: str
         Frecuencia de los datos: "Q", "Y"    
     
-    
     Retorno
     -------
     df: pd.DataFrame
         Series consultadas
-    
     
     Documentación
     -------
     https://stats.oecd.org/
     
     
-    @author: Andrei Romero, Mauricio Alvarado"""
+    @author: Nobert Andrei Romero Escobedo
+             Mauricio Alvarado
+    
+    """
+
 
     # Uno los codigos de los paises con un '+'
-    filters = ["+".join(countries.keys()) for i in countries.keys()][0]
+    filters = ["+".join(i) for i in countries.keys()]
     
     # Nombres de los países
     nombres = list(countries.values())

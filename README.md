@@ -10,6 +10,7 @@ Vincularse con las APIs:
 5. WorldBank
 6. OCDE
 
+</br>
 <p align="center">
       <img src="figures/bcrp-logo.png" width="150" align="left">
       <img src="figures/yahoo-finance-logo.png" width="200">
@@ -22,14 +23,14 @@ Vincularse con las APIs:
 </p>
 </br> </br> </br> </br> </br>
 
-## Obtención de datos
-Cada código tiene funciones comunes entre todas. La primera es:
+
+## Métodos
+Cada código tiene dos funciones comunes. La primera es:
 ```
 get_data()
 ```
 Sirve para extraer las series dado el periodo definidos en los insumos.
 
-## Obtención de información
 La segunda es: 
 ```
 get_codes()

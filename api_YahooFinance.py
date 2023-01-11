@@ -2,11 +2,12 @@ import pandas as pd
 import yfinance as yf
 
 
+
 def get_data(series, tipo="Close", fechaini=None, fechafin=None):
 
     """ Importar multiples series de la API de Yahoo Finance
     
-    Parametros
+    Parámetros
     ----------
     series: dict
         Lista de los codigos de las series y nombres
@@ -23,8 +24,8 @@ def get_data(series, tipo="Close", fechaini=None, fechafin=None):
     df: pd.DataFrame
         Series consultadas
     
-    Documentacion
-    ---------
+    Documentación
+    ----------
     https://pypi.org/project/yfinance/
     
     
@@ -62,6 +63,7 @@ def get_data(series, tipo="Close", fechaini=None, fechafin=None):
 
 
     @author: Mauricio Alvarado
+    
     """
     
     
@@ -79,12 +81,9 @@ def get_data(series, tipo="Close", fechaini=None, fechafin=None):
         data.reset_index(inplace=True)
         data[key] = data[tipo]
     
-        if df.empty is True:
-            df = pd.concat([df, data[["Date", key]]])
-        else:
-            df = pd.merge(df, data[["Date", key]], how="left")
-    
-    
+        # Merge
+        df = pd.concat([df, data[["Date", key]]]) if df.empty is True else pd.merge(df, data[["Date", key]], how="left")
+
     df.set_index("Date", inplace=True)
     df = df.rename(series, axis = 1)
 
