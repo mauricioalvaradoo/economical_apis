@@ -61,13 +61,12 @@ def get_data(series, fechaini, fechafin):
         list_values = []
         list_time = []
                 
-        for value in response:
-            list_values.append(float(value["values"][0]))    
-        for time in response:
-            list_values.append(time["name"])
+        for j in response:
+            list_values.append(float(j["values"][0]))    
+            list_time.append(j["name"])
 
         # Merge
-        dic = pd.DataFrame({"time": list_time, f"{i}": list_time})                      
+        dic = pd.DataFrame({"time": list_time, f"{i}": list_values})                      
         df = pd.concat([df, dic]) if df.empty is True else pd.merge(df, dic, how="outer")
         
     df.set_index("time", inplace=True)
