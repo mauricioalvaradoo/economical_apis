@@ -104,7 +104,7 @@ def get_codes(consulta, grupo=None, frecuencia=None):
         Palabras claves de los grupos. Default: None
     frecuencia: str
         Frecuencia de la serie consultada. Default: None.
-        Opciones: "Diario", "Mensual", "Trimestral", "Anual"
+        Opciones: "Diaria", "Mensual", "Trimestral", "Anual"
 
     Retorno
     ----------
