@@ -13,6 +13,7 @@ def get_data(series, api_key, fechaini, fechafin):
         Diccionario de los códigos y nombres de las series
     api_key: str
         API Key del desarrollador: https://fred.stlouisfed.org/docs/api/api_key.html
+        - key: abcdefghijklmnopqrstuvwxyz123456
     fechaini: str
         Fecha de inicio de la serie
         -Diario: yyyy-mm-dd
@@ -87,6 +88,7 @@ def get_codes(consulta, api_key):
         Palabras claves de las consultas  
     api_key: str
         API Key del desarrollador: https://fred.stlouisfed.org/docs/api/api_key.html
+        - key: abcdefghijklmnopqrstuvwxyz123456
     
     Retorno
     ----------

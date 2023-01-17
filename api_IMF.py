@@ -3,15 +3,15 @@ import requests
 
 
 
-def get_data(country, series, fechaini, fechafin, frequency, database="IFS"):
+def get_data(countries, series, fechaini, fechafin, frequency, tipo="by_countries", database="IFS"):
  
     """ Importar multiples series de la API del IMF
     
     Parámetros
     ----------
-    country: str
-        Pais
-    series: list
+    countries: dict
+        Códigos de países
+    series: dict
         Codigos de las series
     fechaini: str
         Fecha de inicio
@@ -19,8 +19,12 @@ def get_data(country, series, fechaini, fechafin, frequency, database="IFS"):
         Fecha de fin
     frequency: str
         Frecuencia de series: (M, Q, A)
+    tipo: str
+        Tipo de pedido. Default: by_countries
+        - by_countries: Varios países y una serie
+        - by_series: Un país y varias series
     database: str
-        Base de datos. Default International Finance Statistics (IFS)
+        Base de datos. Default: International Finance Statistics (IFS)
         Otras: Goverment Finance (GFS), Balance of Payments (BOP), entre otros
     
     Retorno
@@ -38,41 +42,63 @@ def get_data(country, series, fechaini, fechafin, frequency, database="IFS"):
     
     """
     
-    df = pd.Dataframe()
+    df = pd.DataFrame()
+
+    base = "http://dataservices.imf.org/REST/SDMX_JSON.svc/"
+    method = "CompactData"
+    date = f"startPeriod={fechaini}&endPeriod={fechafin}"
     
 
-    for i in series:
+    if tipo == "by_countries":
         
-        base = "http://dataservices.imf.org/REST/SDMX_JSON.svc/"
-        method = "CompactData"  
+        serie = list(series.keys())[0]
+        countries = list(countries.keys())
+
+        for i in countries:
         
-        date = f"startPeriod={fechaini}&endPeriod={fechafin}"
-        url = f"{base}{method}/{database}/{frequency}.{country}.{i}?{date}"
-              
-        r = requests.get(url)
+            url = f"{base}{method}/{database}/{frequency}.{i}.{serie}" # ?{date}"   
+            r = requests.get(url)         
+            response = r.json()#["CompactData"]["DataSet"]#["Series"]["Obs"]
+            
+            # list_series = []
+            # for obs in response:
+            #     list_series.append([obs.get("@TIME_PERIOD"), obs.get("@OBS_VALUE")])
+            
+            # data = pd.DataFrame(list_series, columns=["Date", "values"])
+            # data["Date"] = pd.to_datetime(data["Date"])
+            # data["values"] = data["values"].astype('float')
         
-        if r.status_code == 200:
-            pass
-        else:
-            print("Vinculacion no valida!")
-            break
-        
-        r = r.json()["CompactData"]["DataSet"]["Series"]["Obs"]
-        
-        list_series = []
-        for obs in r:
-            list_series.append([obs.get("@TIME_PERIOD"), obs.get("@OBS_VALUE")])
-        
-        data = pd.DataFrame(list_series, columns=["Date", "values"])
-        data["Date"] = pd.to_datetime(data["Date"])
-        data["values"] = data["values"].astype('float')
+            # # Merge
+            # df = pd.concat([df, data]) if df.empty is True else pd.merge(df, data, how="outer")
     
-        # Merge
-        df = pd.concat([df, data]) if df.empty is True else pd.merge(df, data, how="outer")
+
+    # if tipo == "by_series":
+
+    #     country = list(countries.keys())[0]
+    #     series = list(series.keys())
+
+    #     for i in series:
+
+    #         url = f"{base}{method}/{database}/{frequency}.{country}.{i}?{date}"
+    #         r = requests.get(url)
+    #         response = r.json()["CompactData"]["DataSet"]["Series"]["Obs"]
+            
+    #         list_series = []
+    #         for obs in response:
+    #             list_series.append([obs.get("@TIME_PERIOD"), obs.get("@OBS_VALUE")])
+            
+    #         data = pd.DataFrame(list_series, columns=["Date", "values"])
+    #         data["Date"] = pd.to_datetime(data["Date"])
+    #         data["values"] = data["values"].astype('float')
+        
+    #         # Merge
+    #         df = pd.concat([df, data]) if df.empty is True else pd.merge(df, data, how="outer")
+        
     
-    df = df.set_index("Date")
     
-    return df
+    # df = df.set_index("Date")
+    
+    return response
 
 
 
@@ -86,7 +112,7 @@ def get_codes(tipo, consulta=None):
     tipo: str
         Tipo de datos a consultar: "Indicadores", "Países", "Regiones", "Grupos"
     consulta: list
-        Palabras claves de consulta
+        Palabras claves de consulta. Default: None
 
     Retorno
     ----------
@@ -101,6 +127,7 @@ def get_codes(tipo, consulta=None):
     @author: Mauricio Alvarado
     
     """
+
 
     if tipo == "Indicadores":
         url = "https://www.imf.org/external/datamapper/api/v1/indicators"
@@ -121,19 +148,22 @@ def get_codes(tipo, consulta=None):
     else:
         url = print("Revisa bien el tipo!")
 
+    df.dropna(inplace=True)
+
+
     if consulta is not None:
-            consulta = [x.lower() for x in consulta]
+        consulta = [x.lower() for x in consulta]
             
-            for i in consulta:
-                try:
-                    filter = df["Nombres"].str.lower().str.contains(i)
-                    df = df[filter]
-                except:
-                    pass
+        for i in consulta:
+            filter = df["Nombres"].str.lower().str.contains(i)
+            df = df[filter]
+
+    else:
+        pass
+
+    df.set_index("Código", inplace=True)
 
     return df
-
-
 
 
 def get_codes_df1(r):
@@ -146,13 +176,10 @@ def get_codes_df1(r):
     for i in list(r.values()):
         names.append(i["label"])
         units.append(i["unit"])
-        
-    df = pd.DataFrame({"Código": codes, "Nombres": names, "Unidades": units})
+            
+    df1 = pd.DataFrame({"Código": codes, "Nombres": names, "Unidades": units})
 
-    return df
-
-
-
+    return df1
 
 def get_codes_df2(r):
     codes = []
@@ -162,7 +189,9 @@ def get_codes_df2(r):
         codes.append(i)
     for i in list(r.values()):
         names.append(i["label"])
+        
+    df2 = pd.DataFrame({"Código": codes, "Nombres": names})
 
-    df = pd.DataFrame({"Código": codes, "Nombres": names})
+    return df2
 
-    return df
+    
