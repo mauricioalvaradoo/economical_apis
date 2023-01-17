@@ -27,39 +27,6 @@ def get_data(series, tipo="Close", fechaini=None, fechafin=None):
     Documentación
     ----------
     https://pypi.org/project/yfinance/
-    
-    
-    Series usuales
-    ----------
-    * ^GSPC: S&P 500
-    * ^DJI: Dow Jones Industrail Average
-    * ^IXIC: Nasdaq Composite
-    * ^FTSE: FTSE 100
-    * ^N225: Nikkei 225
-    * ^HSI: HSI
-    * ^TNX: Treasury Yield 10 Years
-    * DX-Y.NYB: US/USDX Index
-    * EURUSD=X: EUR/USD
-    
-    * HG=F: Copper Futures
-    * SI=F: Silver Futures
-    * CL=F: Crude Oil Futures
-    * GC=F: Gold Futures
-    * PL=F: Platinum Futures
-    * NG=F: Natural Gas Futures
-    * ZC=F: Corn Futures
-    * ZM=F: Soybean Meal Futures
-    
-    * AMZN: Amazon Inc.
-    * AAPL: Apple Inc.
-    * MSFT: Microsoft
-    * META: Meta Platforms Inc.
-    * NFLX: Netflix Inc.
-    * PYPL: Paypal Holdings Inc.
-    * SHOP: Shopify
-    * SPOT: Spotify
-    * TCEHY: Tencent Holdings Limited
-    * TSLA: Tesla
 
 
     @author: Mauricio Alvarado
@@ -91,6 +58,77 @@ def get_data(series, tipo="Close", fechaini=None, fechafin=None):
     return df
 
 
+def get_codes(consulta):
+    
+    """ Extraer código de la consulta
+    
+    Parámetros
+    ----------
+    consulta: list
+        Palabras claves de las series
+
+    Retorno
+    ----------
+    df: pd.DataFrame
+        Metadatos de las series consultadas
+    
+    Documentación
+    ----------
+    https://www.nasdaq.com/market-activity/stocks/screener
+    
+        
+    Series usuales
+    ----------
+    * ^GSPC: S&P 500
+    * ^DJI: Dow Jones Industrail Average
+    * ^IXIC: Nasdaq Composite
+    * ^FTSE: FTSE 100
+    * ^N225: Nikkei 225
+    * ^HSI: HSI
+    * ^TNX: Treasury Yield 10 Years
+    * DX-Y.NYB: US/USDX Index
+    * EURUSD=X: EUR/USD
+        
+    * HG=F: Copper Futures
+    * SI=F: Silver Futures
+    * CL=F: Crude Oil Futures
+    * GC=F: Gold Futures
+    * PL=F: Platinum Futures
+    * NG=F: Natural Gas Futures
+    * ZC=F: Corn Futures
+    * ZM=F: Soybean Meal Futures
+        
+    * AMZN: Amazon Inc.
+    * AAPL: Apple Inc.
+    * MSFT: Microsoft
+    * META: Meta Platforms Inc.
+    * NFLX: Netflix Inc.
+    * PYPL: Paypal Holdings Inc.
+    * SHOP: Shopify
+    * SPOT: Spotify
+    * TCEHY: Tencent Holdings Limited
+    * TSLA: Tesla
+    
+    
+    @author: Mauricio Alvarado
+    
+    """
+    
+    df = pd.read_csv("./data/Yahoo-Tickers.csv", index_col=0).reset_index()
+    df = df[["Symbol", "Name", "Country", "IPO Year", "Sector", "Industry"]]
+    df.set_index("Symbol", inplace=True)
+    
+    consulta = [x.lower() for x in consulta]
+    
+    for i in consulta:           
+        try:
+            filter = df["Name"].str.lower().str.contains(i)
+            df = df[filter]
+        except:
+            df = print("Consulta no encontrada!")
+    
+    
+    return df
 
 
 

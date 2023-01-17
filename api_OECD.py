@@ -39,44 +39,34 @@ def get_data(identifier, countries, datos, fechaini, fechafin, periodicidad):
     """
 
 
-    # Uno los codigos de los paises con un '+'
     filters = ["+".join(i) for i in countries.keys()]
-    
-    # Nombres de los países
     nombres = list(countries.values())
-    
-    # Cuantos paises hay?
     cantidad_paises = len(countries.keys())
     
     url = f"https://stats.oecd.org/SDMX-JSON/data/{identifier}/{filters}.{datos}/all?startTime={fechaini}&endTime={fechafin}"
 
-    # Requests a la base de datos
     r = requests.get(url)
     if r.status_code == 200:
         pass
     else:
-        print("Porfavor, revisa los datos ingresados.")
+        print("Por favor, revisa los datos ingresados.")
         sys.exit()
 
 
-    # Consigo la ruta donde están las series, pero contiene más info
     series = r.json()["dataSets"][0]["series"]    
     
     df = pd.DataFrame()
-    j = 0 # Para asignar los nombres a las columnas
+    j = 0
 
-    
-    # Loop para consultar las series de cada país
     for i in range(0, cantidad_paises):
         fechas = list(list(series.values())[i]["observations"].keys())    # Índices con fechas
-        valores = list(list(series.values())[i]["observations"].values()) # Valores, en bruto
+        valores = list(list(series.values())[i]["observations"].values()) # Valores en bruto
         
-        # Extraer los valores, limpios -> renombrado como 'nv'
+        # Extraer los valores limpios
         nv = []
         for i in range(0, len(fechas)):
             nv.append(valores[i][0])
-        
-        # Merge los datos de cada país
+
         if df.empty == True:
             df = pd.DataFrame({"fechas": fechas, nombres[j]: nv})
         else:
@@ -84,10 +74,7 @@ def get_data(identifier, countries, datos, fechaini, fechafin, periodicidad):
             df = df.merge(df2, how="inner")
         j += 1    
       
-    # Asigno a la columna fechas en el índice  
     df = df.set_index("fechas")
-    
-    # Creo una lista con el rango de `fechaini` - `fechafin``
     df.index = pd.period_range(fechaini, fechafin, freq=periodicidad)
 
     return df
