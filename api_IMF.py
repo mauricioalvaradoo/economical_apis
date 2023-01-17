@@ -40,6 +40,7 @@ def get_data(country, series, fechaini, fechafin, frequency, database="IFS"):
     
     df = pd.Dataframe()
     
+
     for i in series:
         
         base = "http://dataservices.imf.org/REST/SDMX_JSON.svc/"
@@ -54,6 +55,7 @@ def get_data(country, series, fechaini, fechafin, frequency, database="IFS"):
             pass
         else:
             print("Vinculacion no valida!")
+            break
         
         r = r.json()["CompactData"]["DataSet"]["Series"]["Obs"]
         

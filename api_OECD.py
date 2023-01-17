@@ -8,10 +8,10 @@ def get_data(identifier, countries, datos, fechaini, fechafin, periodicidad):
     
     """ Importar multiples series de la API de la OCDE
     
-    Parametros
+    Parámetros
     ----------
     identifier: str
-        Código identificador de la base de datos ???
+        Código identificador de la base de datos
     countries: dict
         Códigos y nombres de los países (keys, values)
     datos: str
@@ -33,8 +33,7 @@ def get_data(identifier, countries, datos, fechaini, fechafin, periodicidad):
     https://stats.oecd.org/
     
     
-    @author: Nobert Andrei Romero Escobedo
-             Mauricio Alvarado
+    @author: Nobert Andrei Romero Escobedo, Mauricio Alvarado
     
     """
 

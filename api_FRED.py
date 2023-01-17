@@ -3,25 +3,23 @@ import requests
 
 
 
-def get_data(series, key, fechaini, fechafin):
+def get_data(series, api_key, fechaini, fechafin):
     
     """ Importar múltiples series de la API del FRED
     
     Parámetros
     ----------
     series: dict
-        Diccionario de los códigos y nombres de las series.
-    key: str
-        API Key del desarrollador. 
-        Se obtiene de: "https://fred.stlouisfed.org/docs/api/api_key.html".      
-        - key: abcdefghijklmnopqrstuvwxyz123456       
+        Diccionario de los códigos y nombres de las series
+    api_key: str
+        API Key del desarrollador: https://fred.stlouisfed.org/docs/api/api_key.html
     fechaini: str
-        Fecha de inicio de la serie.
+        Fecha de inicio de la serie
         -Diario: yyyy-mm-dd
         -Mensual: yyyy-mm
         -Anual: yyyy     
     fechfin: str
-        Fecha de fin de la serie.
+        Fecha de fin de la serie
         -Diario: yyyy-mm-dd
         -Mensual: yyyy-mm
         -Anual: yyyy
@@ -36,8 +34,7 @@ def get_data(series, key, fechaini, fechafin):
     https://fred.stlouisfed.org/docs/api/fred/
     
 
-    @author: Mauricio Alvarado
-             Norbert Andrei Romero Escobedo
+    @authors: Norbert Andrei Romero Escobedo, Mauricio Alvarado
     
     """
     
@@ -47,9 +44,9 @@ def get_data(series, key, fechaini, fechafin):
     df = pd.DataFrame()
     
     for i in keys:
-        url = f"https://api.stlouisfed.org/fred/series/observations?series_id={i}&api_key={key}&file_type=json"
+        url = f"https://api.stlouisfed.org/fred/series/observations?series_id={i}&api_key={api_key}&file_type=json"
     
-        r = requests.get(url) ## HTTP: GET
+        r = requests.get(url)
         
         if r.status_code == 200:
             pass
@@ -62,9 +59,9 @@ def get_data(series, key, fechaini, fechafin):
         list_values = []
         list_time = []
         
-        for obs in observations:
-            list_values.append(float(obs["value"]))
-            list_time.append( obs["date"])
+        for j in observations:
+            list_values.append(float(j["value"]))
+            list_time.append(j["date"])
 
 
         dictio = pd.DataFrame({"time": list_time, f"{i}": list_values})
@@ -78,23 +75,18 @@ def get_data(series, key, fechaini, fechafin):
     return df
 
 
-#search_text = ['MOnetary', 'iNDex']
-#api_key = '5ea7806d8a7a82af62865307b8dbf7d0'
 
-def get_codes(search_text, api_key):
+
+def get_codes(consulta, api_key):
     
     """ Extraer metadatos de las consultas
 
     Parámetros
     ----------
-    search_text: list
-        Palabras claves de las consultas
-    
+    consulta: list
+        Palabras claves de las consultas  
     api_key: str
-        API Key del desarrollador. 
-        Se obtiene de: "https://fred.stlouisfed.org/docs/api/api_key.html".
-        
-        - key: abcdefghijklmnopqrstuvwxyz123456
+        API Key del desarrollador: https://fred.stlouisfed.org/docs/api/api_key.html
     
     Retorno
     ----------
@@ -102,16 +94,16 @@ def get_codes(search_text, api_key):
        Series consultadas
     
 
-    @author: Mauricio Alvarado
-             Norbert Andrei Romero Escobedo
+    @authors: Norbert Andrei Romero Escobedo, Mauricio Alvarado
+    
     """
     
-    formato = ["+".join(i).lower() for i in search_text]
+    formato = ["+".join(i).lower() for i in consulta]
 
     url = f"https://api.stlouisfed.org/fred/series/search?search_text={formato}&api_key={api_key}&file_type=json"
     r = requests.get(url) 
 
-    response= r.json()['seriess']
+    response= r.json()["seriess"]
 
     list_id = []
     list_title = []
@@ -127,7 +119,6 @@ def get_codes(search_text, api_key):
         list_end.append(i['observation_end'])
         list_frequency.append(i['frequency'])
         list_seasonal_adjusment.append(i['seasonal_adjustment'])
-
 
     df = pd.DataFrame({
         "id": list_id,

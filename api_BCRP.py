@@ -90,6 +90,15 @@ def get_data(series, fechaini, fechafin):
 
 
 
+def metadatos():
+
+    metadatos = "data/BCRPData-metadata.csv"
+    df = pd.read_csv(metadatos, index_col=0, sep=";", encoding="latin-1").reset_index()
+    df = df[["Código de serie", "Grupo de serie", "Nombre de serie", "Frecuencia", "Fecha de inicio", "Fecha de fin"]]
+
+    return df
+
+
 
 def get_codes(consulta, grupo=None, frecuencia=None):
 
@@ -159,7 +168,7 @@ def get_documentation(code):
     
     Parámetros
     ----------
-    code: list
+    code: str
         Código base de la serie
 
     Retorno
@@ -178,16 +187,6 @@ def get_documentation(code):
 
     df = metadatos()
     df = df[df["Código de serie"] == str(code)]
-
-    return df
-
-
-
-def metadatos():
-
-    metadatos = "data/BCRPData-metadata.csv"
-    df = pd.read_csv(metadatos, index_col=0, sep=";", encoding="latin-1").reset_index()
-    df = df[["Código de serie", "Grupo de serie", "Nombre de serie", "Frecuencia", "Fecha de inicio", "Fecha de fin"]]
 
     return df
 

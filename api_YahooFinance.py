@@ -58,6 +58,7 @@ def get_data(series, tipo="Close", fechaini=None, fechafin=None):
     return df
 
 
+
 def get_codes(consulta):
     
     """ Extraer código de la consulta

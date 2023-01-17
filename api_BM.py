@@ -1,134 +1,118 @@
 import pandas as pd
 import requests 
-import sys
 
 
-def get_data(countries, indicator, startTime, endTime):
-    """
-    Importar múltiples series de la API del BM (Banco Mundial).
+
+def get_data(countries, indicator, fechaini, fechafin):
+    
+    """ Importar múltiples series de la API del Banco Mundial
     
     Parámetros
     ----------
     countries: dict
-        Diccionario de los códigos y nombres de los países.
-        - countries = {
+        Diccionario de los códigos y nombres de los países
+        -  countries = {
             "BR": "Brasil",
             "CL": "Chile",
             "PE": "Perú"
-        }
-        
+        }   
     indicator: str
-        
-        Código del indicador o serie. 
-        Se obtiene de: "https://datos.bancomundial.org/indicator/"
-        
-        - indicator = 'BX.KLT.DINV.WD.GD.ZS'
-        
-    startTime: str
-        Fecha de inicio de la serie. 
+        Código del indicador o serie
+        Se obtiene de: "https://datos.bancomundial.org/indicator/"        
+    fechaini: str
+        Fecha de inicio de la serie
+        -Anual: yyyy
+    fechafin: str
+        Fecha de fin de la serie
         -Anual: yyyy
         
-    endTime: str
-        Fecha de fin de la serie. 
-        -Anual: yyyy
-        
-    Retorno: 
-    --------
+    Retorno
+    ----------
     df: pd.DataFrame
         Países con las series consultadas.    
     
-    Documentación:
-    -------------
+    Documentación
+    ----------
     https://datahelpdesk.worldbank.org/knowledgebase/articles/898581-api-basic-call-structure
     
     
-    @author: Mauricio Alvarado
-             Norbert Andrei Romero Escobedo
+    @authors: Mauricio Alvarado, Norbert Andrei Romero Escobedo
+
     """
 
-    
+
     keys = list(countries.keys())
     df = pd.DataFrame()
     
-    for key in keys:
-        url = f'http://api.worldbank.org/v2/country/{key}/indicator/{indicator}?format=json'
+
+    for i in keys:
+        url = f"http://api.worldbank.org/v2/country/{i}/indicator/{indicator}?format=json"
          
-        response = requests.get(url) 
+        r = requests.get(url) 
                 
-        if response.status_code == 200:
+        if r.status_code == 200:
             pass
         else:
-            print("Porfavor, revisa los datos ingresados")
+            print("Revisa los datos ingresados")
             break
     
-        response = response.json()
-        observations = response[1]
+        response = r.json()[1]
     
         values_list = []
         time_list = []
     
-        for obs in observations: 
-            values_list.append((obs['value']))
-            time_list.append(obs["date"])
+        for j in response: 
+            values_list.append(float(j["value"]))
+            time_list.append(j["date"])
+        
+        # Merge
+        dictio = pd.DataFrame({"time": time_list, f"{i}": values_list})
+        df = pd.concat([df, dictio]) if df.empty is True else pd.merge(df, dictio, how = "outer")
     
-        dictio = {
-            "time": time_list, 
-            f"{key}": values_list
-        }
-        dictio = pd.DataFrame(dictio)
-                   
-        if df.empty is True:
-             df = pd.concat([df, dictio])
-        else:
-            df = pd.merge(df, dictio, how = "outer")
-    
-    df.set_index('time', inplace = True)
+    df.set_index("time", inplace = True)
     df.sort_index(ascending=True, inplace=True)
     df.rename(countries, axis=1, inplace=True)
             
     return df
       
+          
       
       
-      
-      
-def get_codes(search_text):
+def get_codes(consulta):
         
-    """Extraer metadatos
+    """ Extraer metadatos
+    
     Parámetros
     ----------
-    search_text: list
-        Dos palabras clave de la consulta. 
+    consulta: list
+        Dos palabras clave de la consulta
         
-        -search_text =['life','expectancy']
+        -consulta = ["life", "expectancy"]
         
     Retorno: 
     ---------
-    df: pd. DataFrame
+    df: pd.DataFrame
        Series consultadas
-                  
-    @author: Mauricio Alvarado
-             Norbert Andrei Romero Escobedo  
+    
+    @authors: Mauricio Alvarado, Norbert Andrei Romero Escobedo  
+
     """
 
-    formato = ["%20".join(search_text).lower() for i in search_text][0]   
+
+    formato = ["%20".join(i).lower() for i in consulta]
    
     url = f"http://api.worldbank.org/v2/sources/2/search/{formato}?format=json"
-    response = requests.get(url) 
-    response = response.json()['source'][0]['concept'][1]['variable']#[0]['id']
+    r = requests.get(url) 
+    response = r.json()["source"][0]["concept"][1]["variable"]
     
+
     list_id= []
     list_names= []
     
-    
     for i in response: 
-        list_id.append(i['id'])
-        list_names.append(i['name'])
+        list_id.append(i["id"])
+        list_names.append(i["name"])
         
-        
-    df= pd.DataFrame({
-        "id":list_id,
-        "title":list_names
-    })
+    df= pd.DataFrame({ "id": list_id, "title": list_names})
 
     return df
