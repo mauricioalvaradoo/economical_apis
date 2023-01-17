@@ -40,10 +40,10 @@ def get_data(series, tipo="Close", fechaini=None, fechafin=None):
     for key in keys:
         data = yf.Ticker(key)
         
-        try:
+        if (fechaini == None) or (fechafin == None):
+            data = data.history(period="max")
+        else:
             data = data.history(start=fechaini, end=fechafin)
-        except:
-            data = data.history(period="max")  
         
         data.reset_index(inplace=True)
         data[key] = data[tipo]
@@ -52,6 +52,7 @@ def get_data(series, tipo="Close", fechaini=None, fechafin=None):
         df = pd.concat([df, data[["Date", key]]]) if df.empty is True else pd.merge(df, data[["Date", key]], how="left")
 
     df.set_index("Date", inplace=True)
+    df.index = df.index.strftime("%Y-%m-%d")
     df = df.rename(series, axis = 1)
 
 
