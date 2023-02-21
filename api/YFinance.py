@@ -116,7 +116,7 @@ def get_codes(consulta):
     
     """
     
-    df = pd.read_csv("./data/Yahoo-Tickers.csv", index_col=0).reset_index()
+    df = pd.read_csv("data/Yahoo-Tickers.csv", index_col=0).reset_index()
     df = df[["Symbol", "Name", "Country", "IPO Year", "Sector", "Industry"]]
     df.set_index("Symbol", inplace=True)
     

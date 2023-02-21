@@ -4,7 +4,7 @@ import sys
 
 
 
-def get_data(identifier, countries, datos, fechaini, fechafin, periodicidad):
+def get_data(identifier, countries, serie, fechaini, fechafin, periodicidad):
     
     """ Importar multiples series de la API de la OCDE
     
@@ -14,8 +14,8 @@ def get_data(identifier, countries, datos, fechaini, fechafin, periodicidad):
         Código identificador de la base de datos
     countries: dict
         Códigos y nombres de los países (keys, values)
-    datos: str
-        Código de las series
+    serie: str
+        Código de la serie
     fechaini: str
         Fecha de inicio (yyyy-qq) 
     fechafin: str
@@ -42,7 +42,7 @@ def get_data(identifier, countries, datos, fechaini, fechafin, periodicidad):
     nombres = list(countries.values())
     cantidad_paises = len(countries.keys())
     
-    url = f"https://stats.oecd.org/SDMX-JSON/data/{identifier}/{filters}.{datos}/all?startTime={fechaini}&endTime={fechafin}"
+    url = f"https://stats.oecd.org/SDMX-JSON/data/{identifier}/{filters}.{serie}/all?startTime={fechaini}&endTime={fechafin}"
 
     r = requests.get(url)
     if r.status_code == 200:

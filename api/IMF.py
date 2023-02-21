@@ -25,7 +25,9 @@ def get_data(countries, series, fechaini, fechafin, frequency, tipo="by_countrie
         - by_series: Un país y varias series
     database: str
         Base de datos. Default: International Finance Statistics (IFS)
-        Otras: Goverment Finance (GFS), Balance of Payments (BOP), entre otros
+        Otras: Goverment Finance (GFS), Balance of Payments (BOP),
+               World Economic Outlook (WEO), Fiscal Monitor (FM), 
+               Primary Commodity Price System (PCPS), entre otros
     
     Retorno
     ----------
@@ -35,6 +37,7 @@ def get_data(countries, series, fechaini, fechafin, frequency, tipo="by_countrie
     Documentación
     ----------
     * http://www.bd-econ.com/imfapi1.html
+    * https://data.imf.org/?sk=388dfa60-1d26-4ade-b505-a05a558d9a42&sId=1479329334655
     * https://data.imf.org/?sk=388DFA60-1D26-4ADE-B505-A05A558D9A42&sId=1479329132316
     
     
@@ -44,7 +47,7 @@ def get_data(countries, series, fechaini, fechafin, frequency, tipo="by_countrie
     
     df = pd.DataFrame()
 
-    base = "http://dataservices.imf.org/REST/SDMX_JSON.svc/"
+    base = "http://dataservices.imf.org/REST/SDMX_JSON.svc"
     method = "CompactData"
     date = f"startPeriod={fechaini}&endPeriod={fechafin}"
     
@@ -52,25 +55,28 @@ def get_data(countries, series, fechaini, fechafin, frequency, tipo="by_countrie
     if tipo == "by_countries":
         
         serie = list(series.keys())[0]
-        countries = list(countries.keys())
+        countries_keys = list(countries.keys())
 
-        for i in countries:
+        for i in countries_keys:
         
-            url = f"{base}{method}/{database}/{frequency}.{i}.{serie}" # ?{date}"   
+            url = f"{base}/{method}/{database}/{frequency}.{i}.{serie}" # ?{date}"   
             r = requests.get(url)         
-            response = r.json()#["CompactData"]["DataSet"]#["Series"]["Obs"]
+            response = r.json()["CompactData"]["DataSet"]#["Series"]["Obs"]
             
-            # list_series = []
-            # for obs in response:
-            #     list_series.append([obs.get("@TIME_PERIOD"), obs.get("@OBS_VALUE")])
+        #     list_series = []
+        #     for obs in response:
+        #         list_series.append([obs.get("@TIME_PERIOD"), obs.get("@OBS_VALUE")])
             
-            # data = pd.DataFrame(list_series, columns=["Date", "values"])
-            # data["Date"] = pd.to_datetime(data["Date"])
-            # data["values"] = data["values"].astype('float')
+        #     data = pd.DataFrame(list_series, columns=["Date", "values"])
+        #     data["Date"] = pd.to_datetime(data["Date"])
+        #     data["values"] = data["values"].astype('float')
+            
+        #     data.rename({"values": i}, axis=1, inplace=True)
+            
+        #     # Merge
+        #     df = pd.concat([df, data]) if df.empty is True else pd.merge(df, data, how="outer")
         
-            # # Merge
-            # df = pd.concat([df, data]) if df.empty is True else pd.merge(df, data, how="outer")
-    
+        # df.rename(countries, inplace=True)
 
     # if tipo == "by_series":
 
@@ -98,6 +104,7 @@ def get_data(countries, series, fechaini, fechafin, frequency, tipo="by_countrie
     
     # df = df.set_index("Date")
     
+    
     return response
 
 
@@ -121,7 +128,8 @@ def get_codes(tipo, consulta=None):
 
     Documentación
     ----------
-    https://www.imf.org/external/datamapper/api/help
+    * https://www.imf.org/en/Data
+    * https://www.imf.org/external/datamapper/api/help
 
 
     @author: Mauricio Alvarado
@@ -167,24 +175,26 @@ def get_codes(tipo, consulta=None):
 
 
 def get_codes_df1(r):
-    codes = []
-    names = []
-    units = []
-
+    codes    = []
+    names    = []
+    units    = []
+    datasets = []
     for i in list(r.keys()):
         codes.append(i)
     for i in list(r.values()):
         names.append(i["label"])
         units.append(i["unit"])
+        datasets.append(i["dataset"])
             
-    df1 = pd.DataFrame({"Código": codes, "Nombres": names, "Unidades": units})
+    df1 = pd.DataFrame({
+        "Código": codes, "Nombres": names, "Unidades": units, "Dataset": datasets
+    })
 
     return df1
 
 def get_codes_df2(r):
     codes = []
     names = []
-
     for i in list(r.keys()):
         codes.append(i)
     for i in list(r.values()):

@@ -62,7 +62,7 @@ def get_data(countries, indicator, fechaini, fechafin):
         time_list = []
     
         for j in response: 
-            values_list.append(float(j["value"]))
+            values_list.append(j["value"])
             time_list.append(j["date"])
         
         # Merge
@@ -72,7 +72,9 @@ def get_data(countries, indicator, fechaini, fechafin):
     df.set_index("time", inplace = True)
     df.sort_index(ascending=True, inplace=True)
     df.rename(countries, axis=1, inplace=True)
-            
+
+    df = df.loc[fechaini: fechafin]
+    
     return df
       
           
@@ -99,7 +101,8 @@ def get_codes(consulta):
     """
 
 
-    formato = ["%20".join(i).lower() for i in consulta]
+    formato = "%20".join(consulta)
+    formato = formato.lower()
    
     url = f"http://api.worldbank.org/v2/sources/2/search/{formato}?format=json"
     r = requests.get(url) 

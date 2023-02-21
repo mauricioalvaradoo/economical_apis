@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import requests 
 
 
@@ -61,17 +62,24 @@ def get_data(series, api_key, fechaini, fechafin):
         list_time = []
         
         for j in observations:
-            list_values.append(float(j["value"]))
+            list_values.append(j["value"])
             list_time.append(j["date"])
 
 
         dictio = pd.DataFrame({"time": list_time, f"{i}": list_values})
         df = dictio if df.empty is True else pd.merge(df, dictio, how = "outer")
 
-
     df.set_index("time", inplace=True)
     df.rename (series, axis = 1, inplace = True)
-    df = df.loc[fechaini:fechafin]
+    df = df.loc[fechaini: fechafin]
+    
+    # Corrigiendo '.' for missing values   
+    for i in df.columns:
+        try:
+            df.loc[df[i] == '.', i] = np.nan
+            df[i] = df[i].astype('float')
+        except:
+            pass
     
     return df
 
@@ -100,12 +108,13 @@ def get_codes(consulta, api_key):
     
     """
     
-    formato = ["+".join(i).lower() for i in consulta]
+    formato = "+".join(consulta)
+    formato = formato.lower()
 
     url = f"https://api.stlouisfed.org/fred/series/search?search_text={formato}&api_key={api_key}&file_type=json"
     r = requests.get(url) 
 
-    response= r.json()["seriess"]
+    response = r.json()["seriess"]
 
     list_id = []
     list_title = []
