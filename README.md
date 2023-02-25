@@ -32,7 +32,7 @@ get_data()
 
 La segunda sirve para conseguir la metadata asociada a palabras claves: 
 ```
-get_codes()
+search()
 ```
 El resultado incluye los nombres de las series, códigos y fechas que servirán como complemento con la función anterior `get_data()`.
 

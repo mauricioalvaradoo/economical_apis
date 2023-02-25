@@ -14,7 +14,7 @@ warnings.simplefilter("ignore")
 
 ## BCRP ====================================================
 # get_codes
-consulta = BCRP.get_codes(
+consulta = BCRP.search(
     ["Interbancario"],
     grupo=["Tipo", "Cambio"],
     frecuencia="Mensual"
@@ -34,7 +34,7 @@ df = BCRP.get_data(
 df.head()
 
 # get_documentation
-metadata = BCRP.get_documentation("PN01207PM")
+metadata = BCRP.documentation("PN01207PM")
 metadata
 
 
@@ -42,7 +42,7 @@ metadata
 
 ## Banco Mundial ===========================================
 # get_codes
-consulta = BM.get_codes(
+consulta = BM.search(
     ["life", "expectancy"]
 )
 consulta
@@ -65,7 +65,7 @@ df.head()
 
 ## FRED ====================================================
 # get_codes
-consulta = FRED.get_codes(
+consulta = FRED.search(
     ["Gross", "Domestic", "Product"],
     api_key="#################################"
 )
@@ -87,32 +87,30 @@ df.head()
 
 ## IMF =====================================================
 # get_codes 1 -> Serie
-consulta = IMF.get_codes(
+consulta = IMF.search(
     "Indicadores",
-    consulta = ["Balance"] # Overall Fiscal Balance
+    consulta = ["GDP"] # Overall Fiscal Balance
 )
 consulta
 
 # get_codes 2 -> País
-consulta = IMF.get_codes(
+consulta = IMF.search(
     "Países",
-    consulta = ["United"] # USA
+    consulta = ["China"] # USA
 )
 consulta
 
-# get_data -> Misma serie varios países
+# get_data
 df = IMF.get_data(
     {
-        "USA": "United States"
+        "USA": "United States",
+        "CHN": "China"
     },
     {
-        "GGXCNL_GDP": "Overall Fiscal Balance"
+        "NGDP_RPCH": "Real GDP growth"  
     },
-    fechaini = "2000",
-    fechafin = "2020",
-    frequency = "A",
-    tipo = "by_countries",
-    database = "AFRREO"
+    fechaini = "2000-01-01",
+    fechafin = "2020-01-01"
     )
 
 df
@@ -141,7 +139,7 @@ df
 
 ## Yahoo Finance ===========================================
 # get_codes
-consulta = YFinance.get_codes(
+consulta = YFinance.search(
     ["Tesla"]
 )
 consulta

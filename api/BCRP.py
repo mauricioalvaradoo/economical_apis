@@ -13,21 +13,21 @@ def get_data(series, fechaini, fechafin):
         Diccionario de los códigos y nombres de las series
     fechaini: datetime
         Fecha de inicio de la serie:
-        - Diario: yyyy-mm-dd
-        - Mensual: yyyy-mm
-        - Trimestral: yyyy-q
-        - Anual: yyyy
     fechafin: datetime
-        Fecha de fin de la serie:
-        - Diario: yyyy-mm-dd
-        - Mensual: yyyy-mm
-        - Trimestral: yyyy-q 
-        - Anual: yyyy
+        Fecha de fin de la serie
         
     Retorno
     ----------
     df: pd.DataFrame
         Series consultadas
+    
+    Ejemplo
+    ----------
+    Formatos para fechas:
+    >>> Diario: yyyy-mm-dd
+    >>> Mensual: yyyy-mm
+    >>> Trimestral: yyyy-q
+    >>> Anual: yyyy
     
     Documentación
     ----------
@@ -100,7 +100,7 @@ def metadatos():
 
 
 
-def get_codes(consulta, grupo=None, frecuencia=None):
+def search(consulta, grupo=None, frecuencia=None):
 
     """ Extraer código de la consulta
     
@@ -112,7 +112,10 @@ def get_codes(consulta, grupo=None, frecuencia=None):
         Palabras claves de los grupos. Default: None
     frecuencia: str
         Frecuencia de la serie consultada. Default: None.
-        Opciones: "Diaria", "Mensual", "Trimestral", "Anual"
+        >>> "Diaria"
+        >>> "Mensual"
+        >>> "Trimestral"
+        >>> "Anual"
 
     Retorno
     ----------
@@ -162,7 +165,7 @@ def get_codes(consulta, grupo=None, frecuencia=None):
 
 
 
-def get_documentation(code):
+def documentation(code):
     
     """ Extraer microdatos del código de la serie
     

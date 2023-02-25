@@ -11,20 +11,16 @@ def get_data(countries, indicator, fechaini, fechafin):
     ----------
     countries: dict
         Diccionario de los códigos y nombres de los países
-        -  countries = {
-            "BR": "Brasil",
-            "CL": "Chile",
-            "PE": "Perú"
-        }   
+        >>>  countries = {"PE": "Perú"}   
     indicator: str
         Código del indicador o serie
         Se obtiene de: "https://datos.bancomundial.org/indicator/"        
     fechaini: str
         Fecha de inicio de la serie
-        -Anual: yyyy
+        >>> Anual: yyyy
     fechafin: str
         Fecha de fin de la serie
-        -Anual: yyyy
+        >>> Anual: yyyy
         
     Retorno
     ----------
@@ -80,7 +76,7 @@ def get_data(countries, indicator, fechaini, fechafin):
           
       
       
-def get_codes(consulta):
+def search(consulta):
         
     """ Extraer metadatos
     
@@ -88,8 +84,6 @@ def get_codes(consulta):
     ----------
     consulta: list
         Dos palabras clave de la consulta
-        
-        -consulta = ["life", "expectancy"]
         
     Retorno: 
     ---------

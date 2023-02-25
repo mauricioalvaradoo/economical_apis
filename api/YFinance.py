@@ -12,8 +12,13 @@ def get_data(series, tipo="Close", fechaini=None, fechafin=None):
     series: dict
         Lista de los codigos de las series y nombres
     tipo: str
-        Serie consultada. Default: Close.
-        Otros: Open, High, Low, AdjClose, Volume
+        Serie consultada.
+        >>> Close: Default
+        >>> Open
+        >>> High
+        >>> Low
+        >>> AdjClose
+        >>> Volume
     fechaini: datetime
         Fecha de inicio de la serie 
     fechafin: datetime
@@ -60,7 +65,7 @@ def get_data(series, tipo="Close", fechaini=None, fechafin=None):
 
 
 
-def get_codes(consulta):
+def search(consulta):
     
     """ Extraer código de la consulta
     
@@ -79,7 +84,7 @@ def get_codes(consulta):
     https://www.nasdaq.com/market-activity/stocks/screener
     
         
-    Series usuales
+    Ejemplos
     ----------
     * ^GSPC: S&P 500
     * ^DJI: Dow Jones Industrail Average

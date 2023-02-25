@@ -1,116 +1,75 @@
 import pandas as pd
+import pandas_datareader.data as web
 import requests
 
 
 
-def get_data(countries, series, fechaini, fechafin, frequency, tipo="by_countries", database="IFS"):
+def get_data(countries, series, fechaini, fechafin, database='IMF_WEOPUB'):
  
     """ Importar multiples series de la API del IMF
     
     Parámetros
     ----------
-    countries: dict
+    list_countries: dict
         Códigos de países
-    series: dict
+    list_series: dict
         Codigos de las series
     fechaini: str
         Fecha de inicio
     fechafin: str
         Fecha de fin
-    frequency: str
-        Frecuencia de series: (M, Q, A)
-    tipo: str
-        Tipo de pedido. Default: by_countries
-        - by_countries: Varios países y una serie
-        - by_series: Un país y varias series
     database: str
-        Base de datos. Default: International Finance Statistics (IFS)
-        Otras: Goverment Finance (GFS), Balance of Payments (BOP),
-               World Economic Outlook (WEO), Fiscal Monitor (FM), 
-               Primary Commodity Price System (PCPS), entre otros
+        Base de datos
     
     Retorno
     ----------
     df: pd.DataFrame
         Series consultadas
-     
+
+    Ejemplo
+    ----------
+    Formato de fechas incluso para anual con el formato de mes:
+    >>> yyyy-mm-dd
+    
+    Donde:
+    >>> Anual:   yyyy-01-01
+    >>> Mensual: yyyy-mm-01
+
+    Para el caso de las bases de datos:
+    >>> World Economic Outlook: IMF_WEOPUB
+    >>> 
+
     Documentación
     ----------
-    * http://www.bd-econ.com/imfapi1.html
-    * https://data.imf.org/?sk=388dfa60-1d26-4ade-b505-a05a558d9a42&sId=1479329334655
-    * https://data.imf.org/?sk=388DFA60-1D26-4ADE-B505-A05A558D9A42&sId=1479329132316
+    * https://www.econdb.com/tree
     
     
     @author: Mauricio Alvarado
     
     """
     
-    df = pd.DataFrame()
-
-    base = "http://dataservices.imf.org/REST/SDMX_JSON.svc"
-    method = "CompactData"
-    date = f"startPeriod={fechaini}&endPeriod={fechafin}"
+    series_codes    = list(series.keys())
+    countries_codes = list(countries.keys())
     
-
-    if tipo == "by_countries":
-        
-        serie = list(series.keys())[0]
-        countries_keys = list(countries.keys())
-
-        for i in countries_keys:
-        
-            url = f"{base}/{method}/{database}/{frequency}.{i}.{serie}" # ?{date}"   
-            r = requests.get(url)         
-            response = r.json()["CompactData"]["DataSet"]#["Series"]["Obs"]
-            
-        #     list_series = []
-        #     for obs in response:
-        #         list_series.append([obs.get("@TIME_PERIOD"), obs.get("@OBS_VALUE")])
-            
-        #     data = pd.DataFrame(list_series, columns=["Date", "values"])
-        #     data["Date"] = pd.to_datetime(data["Date"])
-        #     data["values"] = data["values"].astype('float')
-            
-        #     data.rename({"values": i}, axis=1, inplace=True)
-            
-        #     # Merge
-        #     df = pd.concat([df, data]) if df.empty is True else pd.merge(df, data, how="outer")
-        
-        # df.rename(countries, inplace=True)
-
-    # if tipo == "by_series":
-
-    #     country = list(countries.keys())[0]
-    #     series = list(series.keys())
-
-    #     for i in series:
-
-    #         url = f"{base}{method}/{database}/{frequency}.{country}.{i}?{date}"
-    #         r = requests.get(url)
-    #         response = r.json()["CompactData"]["DataSet"]["Series"]["Obs"]
-            
-    #         list_series = []
-    #         for obs in response:
-    #             list_series.append([obs.get("@TIME_PERIOD"), obs.get("@OBS_VALUE")])
-            
-    #         data = pd.DataFrame(list_series, columns=["Date", "values"])
-    #         data["Date"] = pd.to_datetime(data["Date"])
-    #         data["values"] = data["values"].astype('float')
-        
-    #         # Merge
-    #         df = pd.concat([df, data]) if df.empty is True else pd.merge(df, data, how="outer")
-        
+    df = web.DataReader(
+        '&'.join([
+            'dataset={database}', 
+            'v=Reference area', 
+            'h=TIME', 
+            f'from={fechaini}', 
+            f'to={fechafin}', 
+            'CONCEPT=[NGDP_RPCH]', 
+            f'FROM=[{fechaini}]', 
+            f'TO=[{fechafin}]'
+        ]),
+        'econdb'
+    )
     
-    
-    # df = df.set_index("Date")
-    
-    
-    return response
+    return df
 
 
 
-
-def get_codes(tipo, consulta=None):
+def search(tipo, consulta=None):
     
     """ Extraer código de la consulta
     
@@ -140,19 +99,19 @@ def get_codes(tipo, consulta=None):
     if tipo == "Indicadores":
         url = "https://www.imf.org/external/datamapper/api/v1/indicators"
         r = requests.get(url).json()["indicators"]
-        df = get_codes_df1(r)  
+        df = search_df1(r)  
     elif tipo == "Países":
         url = "https://www.imf.org/external/datamapper/api/v1/countries"
         r = requests.get(url).json()["countries"]
-        df = get_codes_df2(r)  
+        df = search_df2(r)  
     elif tipo == "Regiones":
         url = "https://www.imf.org/external/datamapper/api/v1/regions"
         r = requests.get(url).json()["regions"]
-        df = get_codes_df2(r)
+        df = search_df2(r)
     elif tipo == "Grupos":
         url = "https://www.imf.org/external/datamapper/api/v1/groups"
         r = requests.get(url).json()["groups"]
-        df = get_codes_df2(r)
+        df = search_df2(r)
     else:
         url = print("Revisa bien el tipo!")
 
@@ -174,7 +133,7 @@ def get_codes(tipo, consulta=None):
     return df
 
 
-def get_codes_df1(r):
+def search_df1(r):
     codes    = []
     names    = []
     units    = []
@@ -192,7 +151,7 @@ def get_codes_df1(r):
 
     return df1
 
-def get_codes_df2(r):
+def search_df2(r):
     codes = []
     names = []
     for i in list(r.keys()):

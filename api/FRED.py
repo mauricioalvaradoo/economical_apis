@@ -14,23 +14,23 @@ def get_data(series, api_key, fechaini, fechafin):
         Diccionario de los códigos y nombres de las series
     api_key: str
         API Key del desarrollador: https://fred.stlouisfed.org/docs/api/api_key.html
-        - key: abcdefghijklmnopqrstuvwxyz123456
     fechaini: str
-        Fecha de inicio de la serie
-        -Diario: yyyy-mm-dd
-        -Mensual: yyyy-mm
-        -Anual: yyyy     
+        Fecha de inicio de la serie  
     fechfin: str
         Fecha de fin de la serie
-        -Diario: yyyy-mm-dd
-        -Mensual: yyyy-mm
-        -Anual: yyyy
  
     Retorno 
     ----------
     df: pd.DataFrame
        Series consultadas
     
+    Ejemplo
+    ----------
+    Formatos para fechas:
+    >>> Diario: yyyy-mm-dd
+    >>> Mensual: yyyy-mm
+    >>> Anual: yyyy   
+        
     Documentación
     ----------
     https://fred.stlouisfed.org/docs/api/fred/
@@ -86,7 +86,7 @@ def get_data(series, api_key, fechaini, fechafin):
 
 
 
-def get_codes(consulta, api_key):
+def search(consulta, api_key):
     
     """ Extraer metadatos de las consultas
 
@@ -96,7 +96,6 @@ def get_codes(consulta, api_key):
         Palabras claves de las consultas  
     api_key: str
         API Key del desarrollador: https://fred.stlouisfed.org/docs/api/api_key.html
-        - key: abcdefghijklmnopqrstuvwxyz123456
     
     Retorno
     ----------
