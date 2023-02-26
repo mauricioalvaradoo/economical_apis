@@ -6,6 +6,7 @@ import requests
 def get_data(series, fechaini, fechafin):
 
     """ Importar multiples series de la API del BCRP
+    Considerar que las series deben ser de la misma frecuencia
     
     Parámetros
     ----------
@@ -26,9 +27,25 @@ def get_data(series, fechaini, fechafin):
     Formatos para fechas:
     >>> Diario: yyyy-mm-dd
     >>> Mensual: yyyy-mm
-    >>> Trimestral: yyyy-q
+    >>> Trimestral: yyyyQq
     >>> Anual: yyyy
     
+    Consejos
+    ----------
+    1. De preferencia, para datos 'trimestrales' definir la importación desde
+    Q1 del año de 'fechaini' hasta Q4 del de 'fechafin' para que el 'formato'
+    de las fechas se asigne correctamente. No obstante, se está contemplando
+    que la API posiblemente brinde la información hasta el Q4 de la 'fechafin'
+    así que no se generará ningún error.
+    >>> fechaini: 1994Q1 (primer trimestre)
+    >>> fechafin: 2019Q4 (último trimestre)
+
+    2. En algunos de los casos, cuando se busca importar datos de un año, pero
+    esa serie está en variaciones anuales, la API puede que importe la serie un
+    año después del 'fechaini' definido. Una sencilla solución es definir un año
+    antes del que realmente se desea importar para conseguir la serie con el
+    periodo correcto.
+
     Documentación
     ----------
     https://estadisticas.bcrp.gob.pe/estadisticas/series/ayuda/api
@@ -73,18 +90,28 @@ def get_data(series, fechaini, fechafin):
     df.rename(series, axis=1, inplace=True)
 
 
-    # Modificaciones adicionales
-    try:
-        df.index = pd.period_range(fechaini, fechafin, freq="Q") # Trimestral
-    except:
+    # Formatos de fechas
+    if keys[0][-1] == 'D':
+        df.index = pd.to_datetime(df.index, format="%d.%b.%y")
+    if keys[0][-1] == 'M':
+        df.index = df.index.str.replace('Set', 'Sep')
+        df.index = pd.to_datetime(df.index, format="%b.%Y")
+    if keys[0][-1] == 'Q':
         try:
-            df.index = df.index.str.replace('Set', 'Sep')
-            df.index = pd.to_datetime(df.index, format="%b.%Y") # Mensuales
-        except:
-            try:
-                df.index = pd.to_datetime(df.index, format="%d.%b.%y") # Diarias
-            except:
-                pass
+            df.index = pd.period_range(fechaini, fechafin, freq="Q")
+        except: 
+            try: # Hasta fecha fin Q4
+                df.index = pd.period_range(fechaini, fechafin[:4]+'Q4', freq="Q")
+            except: # Aumentando un año para series en var. %
+                try:
+                    newanio = str( int(fechaini[:4])+1 )
+                    df.index = pd.period_range(newanio+fechaini[4:], fechafin, freq="Q")
+                except:  
+                    try: # Aumentando un año para series en var. % y hasta fechafin Q4 
+                        newanio = str( int(fechaini[:4])+1 )
+                        df.index = pd.period_range(newanio+fechaini[4:], fechafin[:4]+'Q4', freq="Q")
+                    except:
+                        pass
 
     return df
 

@@ -13,7 +13,7 @@ warnings.simplefilter("ignore")
 
 
 ## BCRP ====================================================
-# get_codes
+# search
 consulta = BCRP.search(
     ["Interbancario"],
     grupo=["Tipo", "Cambio"],
@@ -41,7 +41,7 @@ metadata
 
 
 ## Banco Mundial ===========================================
-# get_codes
+# search
 consulta = BM.search(
     ["life", "expectancy"]
 )
@@ -64,7 +64,7 @@ df.head()
 
 
 ## FRED ====================================================
-# get_codes
+# search
 consulta = FRED.search(
     ["Gross", "Domestic", "Product"],
     api_key="#################################"
@@ -86,14 +86,14 @@ df.head()
 
 
 ## IMF =====================================================
-# get_codes 1 -> Serie
+# search 1 -> Serie
 consulta = IMF.search(
     "Indicadores",
     consulta = ["GDP"] # Overall Fiscal Balance
 )
 consulta
 
-# get_codes 2 -> País
+# search 2 -> País
 consulta = IMF.search(
     "Países",
     consulta = ["China"] # USA
@@ -119,7 +119,7 @@ df
 
 
 ## OECD ====================================================
-# get_data
+# search
 df = OECD.get_data(
     identifier = "SNA_TABLE1",
     countries = 
@@ -138,7 +138,7 @@ df
 
 
 ## Yahoo Finance ===========================================
-# get_codes
+# search
 consulta = YFinance.search(
     ["Tesla"]
 )
