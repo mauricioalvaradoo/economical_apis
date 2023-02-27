@@ -89,7 +89,7 @@ df.head()
 # search 1 -> Serie
 consulta = IMF.search(
     "Indicadores",
-    consulta = ["GDP"] # Overall Fiscal Balance
+    consulta = ["GDP"] # Real GDP growth
 )
 consulta
 
@@ -103,15 +103,16 @@ consulta
 # get_data
 df = IMF.get_data(
     {
+        'NGDP_RPCH': 'Real GDP growth'
+    },
+    fechaini = "2000",
+    fechafin = "2020",
+    database = 'WEO',
+    country_codes = {
         "USA": "United States",
         "CHN": "China"
-    },
-    {
-        "NGDP_RPCH": "Real GDP growth"  
-    },
-    fechaini = "2000-01-01",
-    fechafin = "2020-01-01"
-    )
+    }   
+)
 
 df
 

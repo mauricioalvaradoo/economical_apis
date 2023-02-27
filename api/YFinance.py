@@ -52,6 +52,12 @@ def get_data(series, tipo="Close", fechaini=None, fechafin=None):
         
         data.reset_index(inplace=True)
         data[key] = data[tipo]
+
+        try: 
+            # Quitar zona horaria
+            data['Date'] = data['Date'].dt.tz_localize(None)
+        except:
+            pass
     
         # Merge
         df = pd.concat([df, data[["Date", key]]]) if df.empty is True else pd.merge(df, data[["Date", key]], how="left")
@@ -86,35 +92,35 @@ def search(consulta):
         
     Ejemplos
     ----------
-    * ^GSPC: S&P 500
-    * ^DJI: Dow Jones Industrail Average
-    * ^IXIC: Nasdaq Composite
-    * ^FTSE: FTSE 100
-    * ^N225: Nikkei 225
-    * ^HSI: HSI
-    * ^TNX: Treasury Yield 10 Years
-    * DX-Y.NYB: US/USDX Index
-    * EURUSD=X: EUR/USD
+    >>> ^GSPC: S&P 500
+    >>> ^DJI: Dow Jones Industrail Average
+    >>> ^IXIC: Nasdaq Composite
+    >>> ^FTSE: FTSE 100
+    >>> ^N225: Nikkei 225
+    >>> ^HSI: HSI
+    >>> ^TNX: Treasury Yield 10 Years
+    >>> DX-Y.NYB: US/USDX Index
+    >>> EURUSD=X: EUR/USD
         
-    * HG=F: Copper Futures
-    * SI=F: Silver Futures
-    * CL=F: Crude Oil Futures
-    * GC=F: Gold Futures
-    * PL=F: Platinum Futures
-    * NG=F: Natural Gas Futures
-    * ZC=F: Corn Futures
-    * ZM=F: Soybean Meal Futures
+    >>> HG=F: Copper Futures
+    >>> SI=F: Silver Futures
+    >>> CL=F: Crude Oil Futures
+    >>> GC=F: Gold Futures
+    >>> PL=F: Platinum Futures
+    >>> NG=F: Natural Gas Futures
+    >>> ZC=F: Corn Futures
+    >>> ZM=F: Soybean Meal Futures
         
-    * AMZN: Amazon Inc.
-    * AAPL: Apple Inc.
-    * MSFT: Microsoft
-    * META: Meta Platforms Inc.
-    * NFLX: Netflix Inc.
-    * PYPL: Paypal Holdings Inc.
-    * SHOP: Shopify
-    * SPOT: Spotify
-    * TCEHY: Tencent Holdings Limited
-    * TSLA: Tesla
+    >>> AMZN: Amazon Inc.
+    >>> AAPL: Apple Inc.
+    >>> MSFT: Microsoft
+    >>> META: Meta Platforms Inc.
+    >>> NFLX: Netflix Inc.
+    >>> PYPL: Paypal Holdings Inc.
+    >>> SHOP: Shopify
+    >>> SPOT: Spotify
+    >>> TCEHY: Tencent Holdings Limited
+    >>> TSLA: Tesla
     
     
     @author: Mauricio Alvarado

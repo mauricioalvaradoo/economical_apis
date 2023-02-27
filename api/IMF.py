@@ -4,23 +4,23 @@ import requests
 
 
 
-def get_data(countries, series, fechaini, fechafin, database='IMF_WEOPUB'):
+def get_data(series, fechaini, fechafin, database='WEO', country_codes=None):
  
     """ Importar multiples series de la API del IMF
     
     Parámetros
     ----------
-    list_countries: dict
-        Códigos de países
-    list_series: dict
+    series_codes: dict
         Codigos de las series
     fechaini: str
         Fecha de inicio
     fechafin: str
         Fecha de fin
     database: str
-        Base de datos
-    
+        Base de datos. Default: WEO
+    countries_codes: dict
+        Códigos de países. Default: None
+
     Retorno
     ----------
     df: pd.DataFrame
@@ -28,16 +28,30 @@ def get_data(countries, series, fechaini, fechafin, database='IMF_WEOPUB'):
 
     Ejemplo
     ----------
-    Formato de fechas incluso para anual con el formato de mes:
+    * Formato de fechas incluso para anual con el formato de mes:
     >>> yyyy-mm-dd
-    
-    Donde:
-    >>> Anual:   yyyy-01-01
-    >>> Mensual: yyyy-mm-01
 
-    Para el caso de las bases de datos:
-    >>> World Economic Outlook: IMF_WEOPUB
-    >>> 
+        Donde:
+        >>> Anual:   yyyy-01-01
+        >>> Mensual: yyyy-mm-01
+    
+    * Bases de datos [Frecuencia]: Código
+    >>> Asia and Pacific Regional Economic Outlook [A]: 
+    >>> Balance of Payments [A]: 
+    >>> Middle East and Central Asia Regional Economic Outlook [A]: 
+    >>> Sub-Saharan African Regional Economic Outlook [A]: 
+    >>> Western Hemisphere Regional Economic Outlook [A]: 
+    >>> Principal Global Indicators [M, Q, A]: 
+    >>> World Economic Outlook [A]: WEO
+    >>> Fiscal Monitor [A]:
+    >>> International Financial Statistics [A]:
+    >>> Financial Soundness Indicators [A]: 
+    >>> Consumer Price Index [M, Q, A]: 
+
+        Donde:
+        >>> A: Anual 
+        >>> Q: Trimestral
+        >>> M: Mensual
 
     Documentación
     ----------
@@ -47,25 +61,28 @@ def get_data(countries, series, fechaini, fechafin, database='IMF_WEOPUB'):
     @author: Mauricio Alvarado
     
     """
+
+    series_codes = list(series.keys())
+
+
+    if country_codes:
+        country_codes = list(country_codes.keys())
+        series = [f'{c}.{s}' for s in series_codes for c in country_codes]
+    else:
+        series = series_codes
     
-    series_codes    = list(series.keys())
-    countries_codes = list(countries.keys())
+    dfs = []
+    for s in series:
+        try:
+            dta = web.DataReader(s, 'IMF', database, start=fechaini, end=fechafin)
+            dfs.append(dta)
+        except:
+            pass
     
-    df = web.DataReader(
-        '&'.join([
-            'dataset={database}', 
-            'v=Reference area', 
-            'h=TIME', 
-            f'from={fechaini}', 
-            f'to={fechafin}', 
-            'CONCEPT=[NGDP_RPCH]', 
-            f'FROM=[{fechaini}]', 
-            f'TO=[{fechafin}]'
-        ]),
-        'econdb'
-    )
+    df = pd.concat(dfs, axis=1)
     
     return df
+
 
 
 
