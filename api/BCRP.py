@@ -93,6 +93,7 @@ def get_data(series, fechaini, fechafin):
     # Formatos de fechas
     if keys[0][-1] == 'D':
         df.index = pd.to_datetime(df.index, format="%d.%b.%y")
+        df.index = df.index.strftime("%Y-%m-%d")
     if keys[0][-1] == 'M':
         df.index = df.index.str.replace('Set', 'Sep')
         df.index = pd.to_datetime(df.index, format="%b.%Y")
